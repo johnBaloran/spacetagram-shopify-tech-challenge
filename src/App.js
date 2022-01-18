@@ -1,25 +1,66 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import Button from "./components/Button";
+import AllImages from "./pages/AllImages";
+import Header from "./components/Header";
+import AllLikedPhotos from "./pages/AllLikedPhotos";
+const apiKey = "rZwEA3N4xhZyODBzxCrfoA6P6HYJHj2eKnN9F9Jj";
 
-function App() {
+const App = () => {
+  const [photos, setPhotos] = useState([]);
+  const getNasaPhotos = async () => {
+    const year = Math.floor(Math.random() * (2022 - 1996) + 1996);
+    const month = Math.floor(Math.random() * 12 + 1);
+    let day;
+    if (month === 4 || month === 6 || month === 9 || month === 11) {
+      day = Math.floor(Math.random() * 30 + 1);
+    } else if (month === 2) {
+      day = Math.floor(Math.random() * 28 + 1);
+    } else {
+      day = Math.floor(Math.random() * 31 + 1);
+    }
+    console.log(`${year}-${month}-${day}`);
+
+    const response = await fetch(
+      `https://api.nasa.gov/planetary/apod?api_key=${apiKey}&date=${year}-${month}-${day}
+      `
+    );
+    console.log(response);
+
+    const data = await response.json();
+
+    setPhotos((prev) => {
+      return [...prev, data];
+    });
+  };
+
+  useEffect(() => {
+    getNasaPhotos();
+    window.addEventListener("scroll", handleScroll);
+  }, []);
+
+  const handleScroll = (event) => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop ===
+      document.documentElement.offsetHeight
+    ) {
+      getNasaPhotos();
+      console.log("hello");
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Header />
+      <div className="App">
+        <Routes>
+          <Route path="/" element={<AllImages photos={photos} />} />
+          <Route path="/liked-photos" element={<AllLikedPhotos />} />
+        </Routes>
+      </div>
+    </Router>
   );
-}
+};
 
 export default App;
