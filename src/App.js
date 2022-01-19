@@ -5,10 +5,13 @@ import Button from "./components/Button";
 import AllImages from "./pages/AllImages";
 import Header from "./components/Header";
 import AllLikedPhotos from "./pages/AllLikedPhotos";
+import Context from "./context/context";
 const apiKey = "rZwEA3N4xhZyODBzxCrfoA6P6HYJHj2eKnN9F9Jj";
 
 const App = () => {
   const [photos, setPhotos] = useState([]);
+  const [likedPhotos, setLikedPhotos] = useState([]);
+  const [stayLiked, setStayLiked] = useState(null);
   const getNasaPhotos = async () => {
     const year = Math.floor(Math.random() * (2022 - 1996) + 1996);
     const month = Math.floor(Math.random() * 12 + 1);
@@ -51,15 +54,22 @@ const App = () => {
   };
 
   return (
-    <Router>
-      <Header />
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<AllImages photos={photos} />} />
-          <Route path="/liked-photos" element={<AllLikedPhotos />} />
-        </Routes>
-      </div>
-    </Router>
+    <div className="App">
+      <Context.Provider
+        value={{
+          likedPhotos: likedPhotos,
+          setLikedPhotos: setLikedPhotos,
+        }}
+      >
+        <Router>
+          <Header />
+          <Routes>
+            <Route path="/" element={<AllImages photos={photos} />} />
+            <Route path="/liked-photos" element={<AllLikedPhotos />} />
+          </Routes>
+        </Router>
+      </Context.Provider>
+    </div>
   );
 };
 
