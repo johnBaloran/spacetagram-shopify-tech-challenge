@@ -1,9 +1,12 @@
 import { useContext, useState, useEffect } from "react";
 import Context from "../context/context";
+import useFireBase from "../hooks/useFireBase";
 
 const Button = ({ photo }) => {
   const ctx = useContext(Context);
   const [isLiked, setIsLiked] = useState(false);
+  const { createNewLikedPhoto, deleteLikedPhoto } = useFireBase();
+
   useEffect(() => {
     if (
       ctx.likedPhotos.filter((image) => {
@@ -16,24 +19,26 @@ const Button = ({ photo }) => {
     }
   }, []);
 
-  console.log(
-    ctx.likedPhotos.filter((image) => image.date === photo.date).length
-  );
-
   const likingPhoto = (photoObj) => {
-    ctx.setLikedPhotos((prev) => [...prev, photoObj]);
+    // ctx.setLikedPhotos((prev) => [...prev, photoObj]);
+    console.log(photoObj);
 
     setIsLiked(true);
+    createNewLikedPhoto(photoObj);
   };
 
   const unlikingPhoto = (photoDate) => {
     setIsLiked(false);
-    const newLikedPhotos = ctx.likedPhotos.filter((photo) => {
-      return photoDate !== photo.date;
+    const unlikedPhoto = ctx.likedPhotos.filter((photo) => {
+      console.log(photoDate, photo.date, photo);
+
+      return photoDate === photo.date;
     });
-    ctx.setLikedPhotos(newLikedPhotos);
+    console.log(unlikedPhoto);
+
+    // ctx.setLikedPhotos(newLikedPhotos);
+    deleteLikedPhoto(unlikedPhoto[0].id);
   };
-  console.log(ctx.likedPhotos);
 
   return (
     <>

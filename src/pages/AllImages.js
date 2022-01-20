@@ -2,7 +2,6 @@ import { useState } from "react";
 import Image from "../components/Image";
 import Button from "../components/Button";
 const AllImages = ({ photos }) => {
-  const [likedPhotos, setLikedPhotos] = useState([]);
 
   return (
     <>
@@ -12,8 +11,7 @@ const AllImages = ({ photos }) => {
             <Image photo={photo} />
             <Button
               photo={photo}
-              likedPhotos={likedPhotos}
-              setLikedPhotos={setLikedPhotos}
+              
             />
           </>
         );
